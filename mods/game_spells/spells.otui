@@ -1,0 +1,29 @@
+MainWindow
+  !text: tr('Spells')
+  size: 160 450
+  @onEscape: modules.game_spells.toggle()
+
+  Label
+    id: spellsLabel
+    !text: tr('Player Spells')
+    width: 130
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: 5
+    margin-left: 5
+  Label
+    id: spellsLabel
+    !text: tr('exura')
+    width: 130
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 5
+    margin-left: 5
+  Label
+    id: spellsLabel
+    !text: tr('exori')
+    width: 130
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 5
+    margin-left: 5

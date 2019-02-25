@@ -1,0 +1,14 @@
+Module
+  name: client_fastscreenshot
+  description: Save screenshot.
+  author: EgzoT
+  website: ---
+  version: 0.9
+
+  autoload: true
+  autoload-priority: 1000
+  sandboxed: true
+  dependencies: [ game_interface ]
+  scripts: [ client_fastscreenshot ]
+  @onLoad: init()
+  @onUnload: terminate()

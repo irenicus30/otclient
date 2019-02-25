@@ -1,0 +1,4 @@
+[submodule "mods/otclient-candybot"]
+	path = mods/otclient-candybot
+	url = https://github.com/irenicus30/otclient-candybot.git
+	branch = 1098
