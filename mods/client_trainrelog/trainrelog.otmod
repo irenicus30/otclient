@@ -1,0 +1,11 @@
+Module
+  name: client_trainrelog
+  description: Allows automatic login and training for characters in provided list
+  author: irenicus30
+  website: https://otland.net/
+  sandboxed: true
+  scripts: [ trainrelog.lua ]
+  @onLoad: init()
+  @onUnload: terminate()
+  autoload: true
+  autoload-priority: 1000
