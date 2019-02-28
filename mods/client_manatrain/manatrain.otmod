@@ -1,0 +1,11 @@
+Module
+  name: client_manatrain
+  description: Allows mana training with potions buying, drinking and casting spells
+  author: irenicus30
+  website: https://otland.net/
+  sandboxed: true
+  scripts: [ manatrain.lua ]
+  @onLoad: init()
+  @onUnload: terminate()
+  autoload: true
+  autoload-priority: 1000

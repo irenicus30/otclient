@@ -1,7 +1,9 @@
 local trainrelogButton = nil
 local trainrelogWindow = nil
 local credentials = {}
-local credentialsIndex = nil
+local credentialsIndex = 0
+local enterCredentials = false
+local nextCharacter = false
 local trainers = {
   sword=16198,
   axe=16199,
@@ -41,14 +43,17 @@ function toggle()
   if isOn then
     isOn = false
     trainrelogButton:setOn(false)
+    credentialsIndex = 0
   else
     isOn = true
     trainrelogButton:setOn(true)
 
-    readCredentials()
-
-
-    cycleEvent(trainrelogWithCredentials, 3000)
+    if credentialsIndex==0 then
+      credentialsIndex = 1
+      enterCredentials = true
+      readCredentials()    
+      scheduleEvent(trainrelogWithCredentials, 1000)
+    end
   end
 end
 
@@ -61,34 +66,55 @@ function readCredentials()
     if delimPosition~=nil and delimPosition>0 then
       accountName = string.sub(singleCredentials, 1, delimPosition-1)
       password = string.sub(singleCredentials, delimPosition+2. -1)
-      print("*"..accountName.."*")
-      print("*"..password.."*")
+      print("*"..accountName.."*"..password.."*")
 
-      credentials[accountName] = password
+      table.insert(credentials, {accountName=accountName, password=password})
     end
 
   end
 end
 
 function trainrelogWithCredentials()
-  if not g_game.isOnline() then
-    credentialsIndex, credentialsValue = next(credentials, credentialsIndex) 
-    print(credentialsIndex)
-    print(credentialsValue)
+  if not isOn then
+    return
+  elseif not g_game.isOnline() and not g_game.isLogging() then
+    print("traintelog loop, offline")
 
-    account = g_crypt.encrypt(credentialsIndex)
-    password = g_crypt.encrypt(credentialsValue)
+    if nextCharacter then
+      nextCharacter = false
+      credentialsIndex = credentialsIndex + 1
+      print("going next character")
+    end
 
-    os.execute("sleep " .. tonumber(1))
+    if credentialsIndex > #credentials then
+      toggle()
+      print("all characters relog done!")
+      return
+    end
 
-    EnterGame.setAccountName(account)
-    EnterGame.setPassword(password)
+    if enterCredentials then
+      accountName = credentials[credentialsIndex].accountName
+      password = credentials[credentialsIndex].password
+      print(accountName, password)
 
-    os.execute("sleep " .. tonumber(1))
+      accountName = g_crypt.encrypt(accountName)
+      password = g_crypt.encrypt(password)
 
-    EnterGame.doLogin()
-    CharacterList.doLogin()
+      EnterGame.setAccountName(accountName)
+      EnterGame.setPassword(password)
+      print("pass set")
+      EnterGame.doLogin()
+      print("EnterGame.doLogin() done")
+      enterCredentials = false
+      scheduleEvent(trainrelogWithCredentials, 2000)
+    else
+      CharacterList.doLogin()
+      print("CharacterList.doLogin() done")
+      enterCredentials = true
+      scheduleEvent(trainrelogWithCredentials, 1000)
+    end
   else
+    print("traintelog loop, online")
 
     skillChoice = "none"
     skillValue = 0
@@ -125,6 +151,10 @@ function trainrelogWithCredentials()
         end
       end
     end
+
+    nextCharacter = true
+    scheduleEvent(trainrelogWithCredentials, 1000)
+
 
   end
 end

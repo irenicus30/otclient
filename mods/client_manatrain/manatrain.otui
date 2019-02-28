@@ -1,0 +1,29 @@
+MainWindow
+  !text: tr('Spells')
+  size: 160 450
+  @onEscape: modules.client_manatrain.toggle()
+
+  Label
+    id: spellsLabel
+    !text: tr('Player spells')
+    width: 130
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: 5
+    margin-left: 5
+  Label
+    id: spellsLabel
+    !text: tr('placeholder')
+    width: 130
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 5
+    margin-left: 5
+  Label
+    id: spellsLabel
+    !text: tr('placeholder')
+    width: 130
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 5
+    margin-left: 5
