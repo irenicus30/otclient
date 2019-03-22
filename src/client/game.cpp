@@ -1699,6 +1699,7 @@ void Game::setAttackingCreature(const CreaturePtr& creature)
         m_attackingCreature = creature;
 
         g_lua.callGlobalField("g_game", "onAttackingCreatureChange", creature, oldCreature);
+        g_logger.debug("new attacking creature set");
     }
 }
 
