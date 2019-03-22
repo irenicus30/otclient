@@ -740,24 +740,30 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
 
     if(startPos == goalPos) {
         result = Otc::PathFindResultSamePosition;
+        g_logger.debug("Map::findPath startPos equals goalPos");
         return ret;
     }
 
     if(startPos.z != goalPos.z) {
         result = Otc::PathFindResultImpossible;
+        g_logger.debug("Map::findPath startPos and goalPos have different z coordinate");
         return ret;
     }
 
     // check the goal pos is walkable
     if(g_map.isAwareOfPosition(goalPos)) {
+        g_logger.debug("Map::findPath g_map.isAwareOfPosition(goalPos) returns true");
         const TilePtr goalTile = getTile(goalPos);
-        if(!goalTile || !goalTile->isWalkable()) {
+        if(!goalTile || !goalTile->isWalkable(flags & Otc::PathFindAllowCreatures)) {
+            g_logger.debug(stdext::format("Map::findPath !goalTile || !goalTile->isWalkable() returns true, !goalTile=%d", !goalTile));
             return ret;
         }
     }
     else {
+        g_logger.debug("Map::findPath g_map.isAwareOfPosition(goalPos) returns false");
         const MinimapTile& goalTile = g_minimap.getTile(goalPos);
         if(goalTile.hasFlag(MinimapTileNotWalkable)) {
+            g_logger.debug("Map::findPath goalTile.hasFlag(MinimapTileNotWalkable) returns true");
             return ret;
         }
     }
@@ -772,14 +778,19 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     while(currentNode) {
         if((int)nodes.size() > maxComplexity) {
             result = Otc::PathFindResultTooFar;
+            g_logger.debug("Map::findPath (int)nodes.size() > maxComplexity, return PathFindResultTooFar");
             break;
         }
 
         // path found
-        if(currentNode->pos == goalPos && (!foundNode || currentNode->cost < foundNode->cost))
+        if(currentNode->pos == goalPos && (!foundNode || currentNode->cost < foundNode->cost)) {
+            g_logger.debug("Map::findPath path found");
             foundNode = currentNode;
+        }
 
         // cost too high
+        if(foundNode)
+            g_logger.debug(stdext::format("Map::findPath foundNode true, currentNode->totalCost=%f, foundNode->cost=%f",currentNode->totalCost, foundNode->cost));
         if(foundNode && currentNode->totalCost >= foundNode->cost)
             break;
 
@@ -799,7 +810,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                     wasSeen = true;
                     if(const TilePtr& tile = getTile(neighborPos)) {
                         hasCreature = tile->hasCreature();
-                        isNotWalkable = !tile->isWalkable();
+                        isNotWalkable = !tile->isWalkable(flags & Otc::PathFindAllowCreatures);
                         isNotPathable = !tile->isPathable();
                         speed = tile->getGroundSpeed();
                     }
