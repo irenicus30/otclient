@@ -103,6 +103,10 @@ function Player:getItem(itemId, subType)
   return g_game.findPlayerItem(itemId, subType or -1)
 end
 
+function Player:getItemInContainers(itemId, subType)
+  return g_game.findItemInContainers(itemId, subType or -1)
+end
+
 function Player:getItems(itemId, subType)
   local subType = subType or -1
 
