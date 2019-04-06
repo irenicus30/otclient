@@ -17,6 +17,7 @@ local trainrelogDirName = "/trainrelog"
 local trainrelogDir = g_resources.getWriteDir()..trainrelogDirName
 local trainrelogCredentialsFileName = "/trainrelogcredentials.txt"
 local trainrelogCredentialsFile = trainrelogDir..trainrelogCredentialsFileName
+local commentString = "-"
 
 function init()
   trainrelogButton = modules.client_topmenu.addRightToggleButton('trainrelogButton', tr('client_trainrelog module'), '/client_trainrelog/img_client_trainrelog/trainrelog_icon', toggle)
@@ -62,15 +63,18 @@ function readCredentials()
   filecontents = g_resources.readFileContents(trainrelogDirName..trainrelogCredentialsFileName)
   delim = "\n"
   for singleCredentials in string.gmatch(filecontents, "[^".. delim.. "]*") do
-    delimPosition =  string.find(singleCredentials, " ")
-    if delimPosition~=nil and delimPosition>0 then
-      accountName = string.sub(singleCredentials, 1, delimPosition-1)
-      password = string.sub(singleCredentials, delimPosition+2. -1)
-      print("*"..accountName.."*"..password.."*")
+    if string.find(singleCredentials, commentString, 1) == nil then
+      delimPosition =  string.find(singleCredentials, " ")
+      if delimPosition~=nil and delimPosition>0 then
+        accountName = string.sub(singleCredentials, 1, delimPosition-1)
+        password = string.sub(singleCredentials, delimPosition+2. -1)
+        print("*"..accountName.."*"..password.."*")
 
-      table.insert(credentials, {accountName=accountName, password=password})
+        table.insert(credentials, {accountName=accountName, password=password})
+      end
+    else
+      print("skipping "..singleCredentials)
     end
-
   end
 end
 
